@@ -1,0 +1,56 @@
+/*
+ * This module is to generate baud rate clock
+ * Because the clocks between AHB signal interface and UART interface are different gernerally
+ * I design a module to generate baud rate clock by using input serial signals
+ * The basic principle is to count the clock between two consecutive falling edges of the external data multiple times, 
+ * divide the minimum value obtained by the comparison by 16 as the preset value of the self-decrement counter, 
+ * and use the self-decrement counter overflow signal to obtain the divided frequency.
+ */
+
+module baud_gen
+(
+		input		wire						clk						,		
+		input		wire						ser_in				,
+		output	wire						baud_rate_clk
+);
+
+reg 				reg_1 = 0;
+reg					reg_2 = 0;
+reg [17:0]	reg_3 = 0;
+reg [17:0]	reg_4 = 0;
+
+reg [17:0]	overload_reg = 0;
+
+reg [17:0]	cnt_add = 0;
+reg [17:0]	cnt_sub = 0;
+
+wire falling_edge_detect;
+
+wire [17:0]	overload_reg_o;
+wire [17:0] reg_4_o;
+
+reg	[18:0]	sub_reg;
+
+integer k;
+
+// detect falling edge
+always @ (posedge clk)begin
+	reg_1 <= ser_in	;
+	reg_2 <= reg_1	;
+end
+
+assign falling_edge_detect = (~reg_1) & reg_2;
+
+// 18-bit self-incrementing counter
+always @ (posedge clk)begin
+	if(falling_edge_detect)begin
+		cnd_add <= 18'b0;
+	end else begin
+		cnd_add <= cnd_add + 1;
+	end
+end
+
+// subtractor
+always @ (*)begin
+	
+	

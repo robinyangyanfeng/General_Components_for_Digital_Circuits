@@ -47,6 +47,10 @@ module uart2ahb_top #
 	output	wire										rx_overrun_error,
 	output	wire										rx_frame_error,
 	
+	/*
+	 *	Configuration
+	 */
+	input		wire [15:0]							prescale
 
 );
 
